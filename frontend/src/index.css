@@ -1,0 +1,424 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Outfit:wght@100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Propria Light Theme */
+  --background: #F5F7F6;
+  --sidebar: #A7D8C8;
+  --primary: #5F8D7E;
+  --primary-foreground: #FFFFFF;
+  --text: #2F3A38;
+  --card: #FFFFFF;
+  --card-foreground: #2F3A38;
+  --border: rgba(95, 141, 126, 0.2);
+  --muted: #F0F2F1;
+  --muted-foreground: #6B7C75;
+  --accent: #5F8D7E;
+  --accent-foreground: #FFFFFF;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --input: #F0F2F1;
+  --ring: #5F8D7E;
+  --radius: 0.875rem;
+  
+  --popover: #FFFFFF;
+  --popover-foreground: #2F3A38;
+  --secondary: #F0F2F1;
+  --secondary-foreground: #2F3A38;
+  
+  --chart-1: #5F8D7E;
+  --chart-2: #A7D8C8;
+  --chart-3: #7FA99B;
+  --chart-4: #4a7063;
+  --chart-5: #2F3A38;
+}
+
+[data-theme="dark"],
+.dark {
+  /* Propria Dark Theme */
+  --background: #1A1D1C;
+  --sidebar: #151917;
+  --primary: #7FA99B;
+  --primary-foreground: #1A1D1C;
+  --text: #E0E6E4;
+  --card: #242B29;
+  --card-foreground: #E0E6E4;
+  --border: rgba(127, 169, 155, 0.2);
+  --muted: #2C3331;
+  --muted-foreground: #9CA3AF;
+  --accent: #7FA99B;
+  --accent-foreground: #1A1D1C;
+  --destructive: #F87171;
+  --destructive-foreground: #1A1D1C;
+  --success: #34D399;
+  --warning: #FBBF24;
+  --input: #2C3331;
+  --ring: #7FA99B;
+  
+  --popover: #242B29;
+  --popover-foreground: #E0E6E4;
+  --secondary: #2C3331;
+  --secondary-foreground: #E0E6E4;
+  
+  color-scheme: dark;
+}
+
+[data-theme="dark"] body,
+.dark body {
+  background-color: var(--background);
+  color: var(--text);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background-color: var(--background);
+}
+
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+[data-theme="dark"] body {
+  background-color: #1A1D1C;
+  color: #E0E6E4;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', sans-serif;
+}
+
+@layer base {
+  * {
+    @apply border-[var(--border)];
+  }
+  body {
+    @apply bg-[var(--background)] text-[var(--text)];
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+  opacity: 0.5;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  opacity: 0.8;
+}
+
+/* Card styles */
+.propria-card {
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(47, 58, 56, 0.05);
+  border: 1px solid var(--border);
+  padding: 24px;
+}
+
+.propria-card:hover {
+  box-shadow: 0 10px 30px rgba(47, 58, 56, 0.08);
+}
+
+/* Button styles */
+.propria-btn-primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-weight: 500;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.propria-btn-primary:hover {
+  background: #4a7063;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(95, 141, 126, 0.3);
+}
+
+.propria-btn-primary:active {
+  transform: scale(0.98);
+}
+
+.propria-btn-secondary {
+  background: var(--card);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-weight: 500;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.propria-btn-secondary:hover {
+  background: rgba(95, 141, 126, 0.1);
+}
+
+/* Input styles */
+.propria-input {
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--text);
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.propria-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(95, 141, 126, 0.1);
+}
+
+/* Table styles */
+.propria-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.propria-table th {
+  background: var(--muted);
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted-foreground);
+}
+
+.propria-table td {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.propria-table tr:hover {
+  background: rgba(95, 141, 126, 0.03);
+}
+
+/* Badge styles */
+.badge-paid {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-late {
+  background: rgba(239, 68, 68, 0.1);
+  color: #DC2626;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-verify {
+  background: rgba(245, 158, 11, 0.1);
+  color: #D97706;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-unpaid {
+  background: var(--muted);
+  color: var(--muted-foreground);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-occupied {
+  background: rgba(95, 141, 126, 0.1);
+  color: var(--primary);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-vacant {
+  background: var(--muted);
+  color: var(--muted-foreground);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-active {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Sidebar active item */
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-weight: 500;
+  transition: all 0.2s;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.sidebar-item:hover {
+  background: rgba(95, 141, 126, 0.15);
+}
+
+.sidebar-item.active {
+  background: var(--primary);
+  color: white;
+}
+
+[data-theme="dark"] .sidebar-item.active {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+[data-theme="dark"] .propria-card,
+.dark .propria-card {
+  background: #242B29;
+  border-color: rgba(127, 169, 155, 0.2);
+}
+
+[data-theme="dark"] .sidebar-item.active,
+.dark .sidebar-item.active {
+  background: #7FA99B;
+  color: #1A1D1C;
+}
+
+[data-theme="dark"] .sidebar-item,
+.dark .sidebar-item {
+  color: #7FA99B;
+}
+
+[data-theme="dark"] .propria-table th,
+.dark .propria-table th {
+  background: #2C3331;
+  color: #9CA3AF;
+}
+
+[data-theme="dark"] .propria-table td,
+.dark .propria-table td {
+  border-color: rgba(127, 169, 155, 0.2);
+  color: #E0E6E4;
+}
+
+[data-theme="dark"] .propria-input,
+.dark .propria-input {
+  background: #2C3331;
+  border-color: rgba(127, 169, 155, 0.2);
+  color: #E0E6E4;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Status filter buttons */
+.status-filter {
+  display: inline-flex;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid var(--border);
+  background: var(--card);
+}
+
+.status-filter:hover {
+  border-color: var(--primary);
+}
+
+.status-filter.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.status-filter.paid {
+  border-color: #10B981;
+  color: #059669;
+}
+
+.status-filter.paid.active {
+  background: #10B981;
+  color: white;
+}
+
+.status-filter.late {
+  border-color: #EF4444;
+  color: #DC2626;
+}
+
+.status-filter.late.active {
+  background: #EF4444;
+  color: white;
+}
+
+.status-filter.verify {
+  border-color: #F59E0B;
+  color: #D97706;
+}
+
+.status-filter.verify.active {
+  background: #F59E0B;
+  color: white;
+}

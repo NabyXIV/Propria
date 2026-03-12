@@ -1,0 +1,220 @@
+Optimizing tool selection...Je vais explorer votre projet pour vous donner une prise en main complète. Laissez-moi récupérer les informations essentielles.      
+
+Read [](file:///c%3A/Users/PC/OneDrive/Bureau/Emergent.sh/Appart/README.md)
+
+Read [](file:///c%3A/Users/PC/OneDrive/Bureau/Emergent.sh/Appart/backend/requirements.txt)
+
+Read [](file:///c%3A/Users/PC/OneDrive/Bureau/Emergent.sh/Appart/design_guidelines.json#1-1), lines 1 to 100
+
+Read [](file:///c%3A/Users/PC/OneDrive/Bureau/Emergent.sh/Appart/backend/server.py#1-1), lines 1 to 80
+
+Read [](file:///c%3A/Users/PC/OneDrive/Bureau/Emergent.sh/Appart/frontend/src/App.js#1-1), lines 1 to 80
+
+Read [](file:///c%3A/Users/PC/OneDrive/Bureau/Emergent.sh/Appart/frontend/package.json#1-1), lines 1 to 50
+
+Excellent ! J'ai scanné votre projet complet. Voici votre guide complet de prise en main :
+
+---
+
+## 📱 **Vue d'ensemble du projet**
+
+**Nom:** Propria  
+**Type:** Application web full-stack de gestion immobilière  
+**Architecture:** Frontend (React 19) + Backend (FastAPI)
+
+---
+
+## 🛠️ **Technologies utilisées**
+
+### **Frontend**
+- **React 19** - Framework UI
+- **React Router v7.5.1** - Navigation
+- **Tailwind CSS** - Styling
+- **Radix UI** - Composants accessibles (30+ composants)
+- **React Hook Form** + Zod - Gestion des formulaires
+- **Axios** - Requêtes HTTP
+- **Date-fns** - Manipulation des dates
+- **Lucide React** - Icons
+
+### **Backend**
+- **FastAPI 0.110.1** - Framework API moderne
+- **MongoDB** (Motor async driver) - Base de données NoSQL
+- **Uvicorn** - Serveur ASGI
+- **JWT** - Authentification
+- **Bcrypt** - Hachage des mots de passe
+- **Boto3** - AWS S3 (uploads fichiers)
+- **OAuth2** - Google Sign-In
+
+### **Qualité du code**
+- Black, isort - Formatage/organisation imports
+- Flake8, mypy - Linting et types
+- Pytest - Tests
+
+---
+
+## 📋 **Fonctionnalités principales**
+
+L'application est un **système de gestion de propriétés locatives** avec :
+
+1. **Authentification** - Connexion classique + Google OAuth
+2. **Tableau de bord** - Vue d'ensemble des activités
+3. **Gestion des biens** - Créer, modifier, lister les propriétés
+4. **Gestion des locataires** - Suivi des locataires par bien
+5. **Paiements** - Gestion des loyers et paiements
+6. **Documents** - Upload et stockage de fichiers (contrats, justificatifs)
+7. **Relances** - Suivi des paiements en retard
+8. **Paramètres** - Configuration de l'application
+
+---
+
+## 🎨 **Design & Guidelines**
+
+- **Thème:** Natural Chic (sage verte + blanc)
+- **Philosophie:** Douceur, calme, clarté, professionnalisme
+- **Palette:** 
+  - Primaire: `#5F8D7E` (sage verte)
+  - Fond: `#F5F7F6` (très clair)
+  - Support: `#A7D8C8` (sidebar)
+
+---
+
+## 🚀 **Guide de démarrage**
+
+### **Prérequis**
+- Node.js 18+ et npm
+- Python 3.8+
+- MongoDB (local ou Atlas)
+- Compte AWS (optionnel, pour S3)
+
+### **1️⃣ Configuration - Backend**
+
+```bash
+cd backend
+```
+
+**Créer le fichier `.env` :**
+```env
+MONGO_URL=mongodb://localhost:27017  # ou votre Atlas URL
+DB_NAME=propria
+JWT_SECRET=your-secret-key-here
+REACT_APP_BACKEND_URL=http://localhost:8000
+
+# Optionnel - Google OAuth
+GOOGLE_CLIENT_ID=your-google-id
+GOOGLE_CLIENT_SECRET=your-google-secret
+
+# Optionnel - AWS S3
+AWS_ACCESS_KEY_ID=your-key
+AWS_SECRET_ACCESS_KEY=your-secret
+AWS_S3_BUCKET=propria-uploads
+```
+
+**Installer les dépendances :**
+```bash
+pip install -r requirements.txt
+```
+
+**Démarrer le serveur :**
+```bash
+uvicorn server:app --reload --host 0.0.0.0 --port 8000
+```
+
+✅ Backend disponible sur `http://localhost:8000`  
+📖 Documentation API : `http://localhost:8000/docs`
+
+---
+
+### **2️⃣ Configuration - Frontend**
+
+```bash
+cd frontend
+```
+
+**Créer le fichier `.env.local` :**
+```env
+REACT_APP_BACKEND_URL=http://localhost:8000
+REACT_APP_GOOGLE_CLIENT_ID=your-google-id  # optionnel
+```
+
+**Installer les dépendances :**
+```bash
+npm install
+```
+
+**Démarrer l'app en développement :**
+```bash
+npm start
+```
+
+✅ App disponible sur `http://localhost:3000`
+
+---
+
+## 📁 **Structure du projet**
+
+```
+backend/
+  ├── server.py          # Application principale
+  ├── requirements.txt   # Dépendances Python
+  └── .env              # Variables d'environnement
+
+frontend/
+  ├── src/
+  │   ├── pages/        # Pages principales (Login, Dashboard, etc)
+  │   ├── components/   # Composants réutilisables + UI (Radix)
+  │   ├── hooks/        # Hooks React personnalisés
+  │   ├── lib/          # Utilitaires
+  │   └── App.js        # Router principal
+  ├── public/           # Assets statiques
+  └── package.json      # Dépendances JS
+```
+
+---
+
+## 🔑 **Points clés à retenir**
+
+| Aspect | Détail |
+|--------|--------|
+| **Auth** | JWT en localStorage + Google OAuth |
+| **CORS** | Configuré pour frontend local |
+| **Uploads** | S3 ou répertoire local uploads |
+| **DB** | MongoDB (asynchrone avec Motor) |
+| **Styling** | Tailwind + variables CSS personnalisées |
+| **Tests** | Pytest côté backend, npm test côté frontend |
+
+---
+
+## ✅ **Checklist de démarrage**
+
+- [ ] MongoDB en cours d'exécution
+- [ ] Fichiers `.env` créés (backend + frontend)
+- [ ] `pip install -r requirements.txt` complété
+- [ ] `npm install` complété (frontend)
+- [ ] Backend démarré (`uvicorn server:app --reload`)
+- [ ] Frontend démarré (`npm start`)
+- [ ] Accès à http://localhost:3000
+- [ ] Tester la création de compte/connexion
+
+---
+
+Avez-vous besoin de précisions sur une fonctionnalité particulière ou d'aide pour le démarrage ? 🎯
+
+Created [](file:///c%3A/Users/PC/OneDrive/Bureau/Emergent.sh/Appart/GUIDE_DEMARRAGE.md)
+
+✅ Fait ! J'ai créé le fichier GUIDE_DEMARRAGE.md à la racine de votre projet avec :
+
+- 📱 Vue d'ensemble complet
+- 🛠️ All les technologies utilisées
+- 📋 Les fonctionnalités principales
+- 🎨 Le design et guidelines
+- 🚀 Guide de démarrage détaillé (backend + frontend)
+- 📁 Structure du projet
+- 🔑 Points clés essentiels
+- ✅ Checklist de démarrage
+- 📝 Commandes utiles
+- 🐛 Troubleshooting
+- 📚 Ressources additionnelles
+
+Vous pouvez maintenant consulter ce guide à chaque fois que vous avez besoin de rappels sur le projet ! 📖
+
+Made changes.
