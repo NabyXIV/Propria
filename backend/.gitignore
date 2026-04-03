@@ -1,0 +1,22 @@
+# Environnement virtuel
+venv/
+
+# Variables d'environnement (ne jamais commiter !)
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Uploads locaux
+uploads/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

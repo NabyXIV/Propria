@@ -127,8 +127,7 @@ rm -r node_modules package-lock.json
 # Réinstaller proprement
 npm install
 ```
-
-✅ **Effet:** Toutes les dépendances Babel réinstallées correctement
+py✅ **Effet:** Toutes les dépendances Babel réinstallées correctement
 
 ---
 
