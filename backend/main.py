@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from app.core.database import connect_db, close_db
 from app.routes.auth import router as auth_router
+from app.routes.buildings import router as buildings_router
 
 load_dotenv()
 
@@ -25,6 +26,7 @@ async def shutdown():
     await close_db()
 
 app.include_router(auth_router, prefix="/api")
+app.include_router(buildings_router, prefix="/api")
 
 @app.get("/")
 async def root():
