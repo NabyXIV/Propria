@@ -6,8 +6,6 @@ import { Label } from "../components/ui/label";
 import { Switch } from "../components/ui/switch";
 import { toast } from "sonner";
 
-const API_URL = process.env.REACT_APP_BACKEND_URL;
-
 export default function Parametres() {
   const [user, setUser] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
@@ -173,17 +171,17 @@ export default function Parametres() {
 
         {/* App Info */}
         <div className="propria-card">
-          <h2 className="text-lg font-semibold text-[var(--text)] mb-6">À propos de DORA</h2>
-          
+          <h2 className="text-lg font-semibold text-[var(--text)] mb-6">À propos de Propria</h2>
+
           <div className="space-y-3 text-[var(--muted-foreground)]">
             <p><strong className="text-[var(--text)]">Version:</strong> 1.0.0</p>
             <p><strong className="text-[var(--text)]">Description:</strong> Application de gestion locative professionnelle</p>
-            <p><strong className="text-[var(--text)]">Technologies:</strong> React, FastAPI, MongoDB</p>
+            <p><strong className="text-[var(--text)]">Technologies:</strong> React, FastAPI, MongoDB Atlas</p>
           </div>
 
           <div className="mt-6 p-4 bg-[var(--primary)]/5 rounded-xl border border-[var(--primary)]/20">
             <p className="text-sm text-[var(--text)]">
-              <strong>DORA</strong> vous permet de gérer efficacement vos biens immobiliers, 
+              <strong>Propria</strong> vous permet de gérer efficacement vos biens immobiliers,
               locataires, paiements et documents en un seul endroit.
             </p>
           </div>

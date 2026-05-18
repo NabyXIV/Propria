@@ -13,8 +13,7 @@ import {
 import { Button } from "../components/ui/button";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { toast } from "sonner";
-
-const API_URL = process.env.REACT_APP_BACKEND_URL;
+import api from "../services/api";
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
@@ -27,38 +26,25 @@ export default function Dashboard() {
     fetchDashboardData();
   }, []);
 
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem("propria_token");
-    return token ? { "Authorization": `Bearer ${token}` } : {};
-  };
-
   const fetchDashboardData = async () => {
     try {
-      const headers = { ...getAuthHeaders() };
-      
       const [statsRes, paymentsRes, chartRes] = await Promise.all([
-        fetch(`${API_URL}/api/dashboard/stats`, { headers, credentials: "include" }),
-        fetch(`${API_URL}/api/dashboard/recent-payments?limit=5`, { headers, credentials: "include" }),
-        fetch(`${API_URL}/api/dashboard/chart-data`, { headers, credentials: "include" })
+        api.get("/api/dashboard/stats"),
+        api.get("/api/dashboard/recent-payments?limit=5"),
+        api.get("/api/dashboard/chart-data"),
       ]);
 
-      if (statsRes.ok) {
-        const statsData = await statsRes.json();
-        setStats(statsData);
-      }
-      
-      if (paymentsRes.ok) {
-        const paymentsData = await paymentsRes.json();
-        setRecentPayments(paymentsData);
-      }
-      
-      if (chartRes.ok) {
-        const chartDataRes = await chartRes.json();
-        setChartData(chartDataRes.map(item => ({
+      setStats(statsRes.data);
+      setRecentPayments(paymentsRes.data);
+      setChartData(
+        chartRes.data.map((item) => ({
           ...item,
-          month: item.month.split("-")[1] + "/" + item.month.split("-")[0].slice(2)
-        })));
-      }
+          month:
+            item.month.split("-")[1] +
+            "/" +
+            item.month.split("-")[0].slice(2),
+        }))
+      );
     } catch (error) {
       console.error("Dashboard fetch error:", error);
       toast.error("Erreur lors du chargement des données");
@@ -67,8 +53,13 @@ export default function Dashboard() {
     }
   };
 
+  const user = JSON.parse(localStorage.getItem("propria_user") || "{}");
+
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "USD" }).format(amount);
+    return new Intl.NumberFormat("fr-SN", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount) + " FCFA";
   };
 
   const getStatusBadge = (status) => {
@@ -99,14 +90,16 @@ export default function Dashboard() {
     <div className="space-y-6" data-testid="dashboard">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-[var(--text)]">Bienvenue Admin</h1>
+        <h1 className="text-3xl font-bold text-[var(--text)]">
+          Bienvenue {user?.name?.split(" ")[0] || "Admin"}
+        </h1>
         <p className="text-[var(--muted-foreground)]">Résumé du mois en cours</p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Expected Amount */}
-        <div className="propria-card" data-testid="stat-expected">
+        <div className="stat-card" data-testid="stat-expected">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm font-medium text-[var(--muted-foreground)] uppercase tracking-wide">Montants Attendus</p>
@@ -125,7 +118,7 @@ export default function Dashboard() {
         </div>
 
         {/* Paid Amount */}
-        <div className="propria-card" data-testid="stat-paid">
+        <div className="stat-card success" data-testid="stat-paid">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm font-medium text-[var(--muted-foreground)] uppercase tracking-wide">Payés</p>
@@ -147,7 +140,7 @@ export default function Dashboard() {
         </div>
 
         {/* Late Amount */}
-        <div className="propria-card" data-testid="stat-late">
+        <div className="stat-card danger" data-testid="stat-late">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm font-medium text-red-500 uppercase tracking-wide">En Retard</p>
@@ -179,7 +172,7 @@ export default function Dashboard() {
             <h2 className="text-lg font-semibold text-[var(--text)]">Évaluation des encaissements</h2>
             <span className="text-sm text-[var(--muted-foreground)]">Jan - Déc</span>
           </div>
-          <div className="h-64">
+          <div className="h-48 lg:h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -291,20 +284,22 @@ export default function Dashboard() {
                   </td>
                 </tr>
               ) : (
-                recentPayments.map((payment) => (
-                  <tr key={payment.payment_id} data-testid={`payment-row-${payment.payment_id}`}>
-                    <td>{new Date(payment.due_date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })}</td>
-                    <td>
-                      <div>
-                        <p className="font-medium">{payment.tenant_name || "N/A"}</p>
-                        <p className="text-xs text-[var(--muted-foreground)]">{payment.tenant_phone}</p>
-                      </div>
-                    </td>
-                    <td>{payment.building_name}, {payment.unit_name}</td>
-                    <td className="font-medium">{formatCurrency(payment.amount)}</td>
-                    <td>{getStatusBadge(payment.status)}</td>
-                  </tr>
-                ))
+                <>
+                  {recentPayments.map((payment) => (
+                    <tr key={payment.payment_id} data-testid={`payment-row-${payment.payment_id}`}>
+                      <td>{new Date(payment.due_date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })}</td>
+                      <td>
+                        <div>
+                          <p className="font-medium">{payment.tenant_name || "N/A"}</p>
+                          <p className="text-xs text-[var(--muted-foreground)]">{payment.tenant_phone}</p>
+                        </div>
+                      </td>
+                      <td>{payment.building_name}, {payment.unit_name}</td>
+                      <td className="font-medium">{formatCurrency(payment.amount)}</td>
+                      <td>{getStatusBadge(payment.status)}</td>
+                    </tr>
+                  ))}
+                </>
               )}
             </tbody>
           </table>

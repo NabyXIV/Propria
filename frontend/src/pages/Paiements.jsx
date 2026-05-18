@@ -7,8 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { toast } from "sonner";
-
-const API_URL = process.env.REACT_APP_BACKEND_URL;
+import api from "../services/api";
 
 export default function Paiements() {
   const [payments, setPayments] = useState([]);
@@ -29,39 +28,22 @@ export default function Paiements() {
     fetchData();
   }, [statusFilter]);
 
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem("propria_token");
-    return token ? { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" } : { "Content-Type": "application/json" };
-  };
-
   const fetchData = async () => {
     try {
-      const headers = getAuthHeaders();
-      
-      let paymentsUrl = `${API_URL}/api/payments`;
-      if (statusFilter) {
-        paymentsUrl += `?status=${statusFilter}`;
-      }
-
+      const url = statusFilter ? `/api/payments?status=${statusFilter}` : "/api/payments";
       const [paymentsRes, leasesRes, chartRes] = await Promise.all([
-        fetch(paymentsUrl, { headers, credentials: "include" }),
-        fetch(`${API_URL}/api/leases`, { headers, credentials: "include" }),
-        fetch(`${API_URL}/api/dashboard/chart-data`, { headers, credentials: "include" })
+        api.get(url),
+        api.get("/api/leases"),
+        api.get("/api/dashboard/chart-data"),
       ]);
-
-      if (paymentsRes.ok) {
-        setPayments(await paymentsRes.json());
-      }
-      if (leasesRes.ok) {
-        setLeases(await leasesRes.json());
-      }
-      if (chartRes.ok) {
-        const data = await chartRes.json();
-        setChartData(data.map(item => ({
+      setPayments(paymentsRes.data);
+      setLeases(leasesRes.data);
+      setChartData(
+        chartRes.data.map((item) => ({
           ...item,
-          month: item.month.split("-")[1] + "/" + item.month.split("-")[0].slice(2)
-        })));
-      }
+          month: item.month.split("-")[1] + "/" + item.month.split("-")[0].slice(2),
+        }))
+      );
     } catch (error) {
       toast.error("Erreur lors du chargement");
     } finally {
@@ -74,25 +56,16 @@ export default function Paiements() {
       toast.error("Veuillez remplir tous les champs");
       return;
     }
-
     try {
-      const response = await fetch(`${API_URL}/api/payments`, {
-        method: "POST",
-        headers: getAuthHeaders(),
-        credentials: "include",
-        body: JSON.stringify({
-          ...newPayment,
-          amount: parseFloat(newPayment.amount),
-          due_date: new Date(newPayment.due_date).toISOString()
-        })
+      await api.post("/api/payments", {
+        ...newPayment,
+        amount: parseFloat(newPayment.amount),
+        due_date: new Date(newPayment.due_date).toISOString(),
       });
-
-      if (response.ok) {
-        toast.success("Paiement ajouté");
-        setNewPayment({ lease_id: "", period: "", amount: "", status: "UNPAID", due_date: "" });
-        setShowAddPayment(false);
-        fetchData();
-      }
+      toast.success("Paiement ajouté");
+      setNewPayment({ lease_id: "", period: "", amount: "", status: "UNPAID", due_date: "" });
+      setShowAddPayment(false);
+      fetchData();
     } catch (error) {
       toast.error("Erreur lors de l'ajout");
     }
@@ -100,20 +73,12 @@ export default function Paiements() {
 
   const handleUpdateStatus = async (paymentId, newStatus) => {
     try {
-      const response = await fetch(`${API_URL}/api/payments/${paymentId}`, {
-        method: "PUT",
-        headers: getAuthHeaders(),
-        credentials: "include",
-        body: JSON.stringify({ 
-          status: newStatus,
-          paid_at: newStatus === "PAID" ? new Date().toISOString() : null
-        })
+      await api.put(`/api/payments/${paymentId}`, {
+        status: newStatus,
+        paid_at: newStatus === "PAID" ? new Date().toISOString() : null,
       });
-
-      if (response.ok) {
-        toast.success("Statut mis à jour");
-        fetchData();
-      }
+      toast.success("Statut mis à jour");
+      fetchData();
     } catch (error) {
       toast.error("Erreur lors de la mise à jour");
     }

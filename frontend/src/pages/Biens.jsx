@@ -7,8 +7,7 @@ import { Label } from "../components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from "recharts";
 import { toast } from "sonner";
-
-const API_URL = process.env.REACT_APP_BACKEND_URL;
+import api from "../services/api";
 
 export default function Biens() {
   const [buildings, setBuildings] = useState([]);
@@ -31,23 +30,12 @@ export default function Biens() {
     }
   }, [selectedBuilding]);
 
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem("propria_token");
-    return token ? { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" } : { "Content-Type": "application/json" };
-  };
-
   const fetchBuildings = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/buildings`, {
-        headers: getAuthHeaders(),
-        credentials: "include"
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setBuildings(data);
-        if (data.length > 0 && !selectedBuilding) {
-          setSelectedBuilding(data[0]);
-        }
+      const response = await api.get("/api/buildings");
+      setBuildings(response.data);
+      if (response.data.length > 0 && !selectedBuilding) {
+        setSelectedBuilding(response.data[0]);
       }
     } catch (error) {
       toast.error("Erreur lors du chargement des immeubles");
@@ -58,14 +46,8 @@ export default function Biens() {
 
   const fetchUnits = async (buildingId) => {
     try {
-      const response = await fetch(`${API_URL}/api/units?building_id=${buildingId}`, {
-        headers: getAuthHeaders(),
-        credentials: "include"
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setUnits(data);
-      }
+      const response = await api.get(`/api/units?building_id=${buildingId}`);
+      setUnits(response.data);
     } catch (error) {
       toast.error("Erreur lors du chargement des appartements");
     }
@@ -76,23 +58,12 @@ export default function Biens() {
       toast.error("Veuillez remplir tous les champs");
       return;
     }
-
     try {
-      const response = await fetch(`${API_URL}/api/buildings`, {
-        method: "POST",
-        headers: getAuthHeaders(),
-        credentials: "include",
-        body: JSON.stringify(newBuilding)
-      });
-
-      if (response.ok) {
-        toast.success("Immeuble ajouté");
-        setNewBuilding({ name: "", address: "" });
-        setShowAddBuilding(false);
-        fetchBuildings();
-      } else {
-        toast.error("Erreur lors de l'ajout");
-      }
+      await api.post("/api/buildings", newBuilding);
+      toast.success("Immeuble ajouté");
+      setNewBuilding({ name: "", address: "" });
+      setShowAddBuilding(false);
+      fetchBuildings();
     } catch (error) {
       toast.error("Erreur lors de l'ajout");
     }
@@ -103,29 +74,18 @@ export default function Biens() {
       toast.error("Veuillez remplir tous les champs");
       return;
     }
-
     try {
-      const response = await fetch(`${API_URL}/api/units`, {
-        method: "POST",
-        headers: getAuthHeaders(),
-        credentials: "include",
-        body: JSON.stringify({
-          ...newUnit,
-          building_id: selectedBuilding.building_id,
-          floor: newUnit.floor ? parseInt(newUnit.floor) : null,
-          rooms: newUnit.rooms ? parseInt(newUnit.rooms) : null
-        })
+      await api.post("/api/units", {
+        ...newUnit,
+        building_id: selectedBuilding.building_id,
+        floor: newUnit.floor ? parseInt(newUnit.floor) : null,
+        rooms: newUnit.rooms ? parseInt(newUnit.rooms) : null
       });
-
-      if (response.ok) {
-        toast.success("Appartement ajouté");
-        setNewUnit({ name: "", floor: "", rooms: "" });
-        setShowAddUnit(false);
-        fetchUnits(selectedBuilding.building_id);
-        fetchBuildings();
-      } else {
-        toast.error("Erreur lors de l'ajout");
-      }
+      toast.success("Appartement ajouté");
+      setNewUnit({ name: "", floor: "", rooms: "" });
+      setShowAddUnit(false);
+      fetchUnits(selectedBuilding.building_id);
+      fetchBuildings();
     } catch (error) {
       toast.error("Erreur lors de l'ajout");
     }

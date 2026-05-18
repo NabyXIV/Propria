@@ -218,3 +218,9 @@ Created [](file:///c%3A/Users/PC/OneDrive/Bureau/Emergent.sh/Appart/GUIDE_DEMARR
 Vous pouvez maintenant consulter ce guide à chaque fois que vous avez besoin de rappels sur le projet ! 📖
 
 Made changes.
+
+              Compte démo:
+
+              admin@example.com
+              AdminPassword123
+            

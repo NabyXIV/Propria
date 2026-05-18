@@ -1,6 +1,7 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Toaster } from "./components/ui/sonner";
+import api from "./services/api";
 
 // Pages
 import Login from "./pages/Login";
@@ -14,9 +15,9 @@ import Documents from "./pages/Documents";
 import Relances from "./pages/Relances";
 import Parametres from "./pages/Parametres";
 import AuthCallback from "./pages/AuthCallback";
+import NotificationDetail from "./pages/NotificationDetail";
+import Payer from "./pages/Payer";
 import Layout from "./components/Layout";
-
-const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
@@ -46,18 +47,9 @@ const ProtectedRoute = ({ children }) => {
     // Check session via API (for Google OAuth)
     const checkAuth = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/auth/me`, {
-          credentials: "include",
-          headers: token ? { "Authorization": `Bearer ${token}` } : {}
-        });
-        if (response.ok) {
-          const userData = await response.json();
-          setIsAuthenticated(true);
-          setUser(userData);
-        } else {
-          setIsAuthenticated(false);
-          navigate("/login");
-        }
+        const response = await api.get("/api/auth/me");
+        setIsAuthenticated(true);
+        setUser(response.data);
       } catch (error) {
         setIsAuthenticated(false);
         navigate("/login");
@@ -93,6 +85,7 @@ function AppRouter() {
 
   return (
     <Routes>
+      <Route path="/payer/:token" element={<Payer />} />
       <Route path="/login" element={<Login />} />
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/biens" element={<ProtectedRoute><Biens /></ProtectedRoute>} />
@@ -102,6 +95,7 @@ function AppRouter() {
       <Route path="/paiements" element={<ProtectedRoute><Paiements /></ProtectedRoute>} />
       <Route path="/documents" element={<ProtectedRoute><Documents /></ProtectedRoute>} />
       <Route path="/relances" element={<ProtectedRoute><Relances /></ProtectedRoute>} />
+      <Route path="/notifications/:id" element={<ProtectedRoute><NotificationDetail /></ProtectedRoute>} />
       <Route path="/parametres" element={<ProtectedRoute><Parametres /></ProtectedRoute>} />
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />

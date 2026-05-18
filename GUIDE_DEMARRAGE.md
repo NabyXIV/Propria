@@ -103,7 +103,7 @@ pip install -r requirements.txt
 uvicorn server:app --reload --host 0.0.0.0 --port 8000
 ```
 
-✅ Backend disponible sur `http://localhost:8000`  
+✅ Backend disponible sur `http://localhost:8000`
 📖 Documentation API : `http://localhost:8000/docs`
 
 ---

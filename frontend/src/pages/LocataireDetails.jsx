@@ -5,8 +5,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { toast } from "sonner";
-
-const API_URL = process.env.REACT_APP_BACKEND_URL;
+import api from "../services/api";
 
 export default function LocataireDetails() {
   const { id } = useParams();
@@ -27,48 +26,32 @@ export default function LocataireDetails() {
     fetchTenantDetails();
   }, [id]);
 
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem("propria_token");
-    return token ? { "Authorization": `Bearer ${token}` } : {};
-  };
-
   const fetchTenantDetails = async () => {
     try {
-      const headers = getAuthHeaders();
-      
       const [tenantRes, leasesRes, docsRes] = await Promise.all([
-        fetch(`${API_URL}/api/tenants/${id}`, { headers, credentials: "include" }),
-        fetch(`${API_URL}/api/leases?tenant_id=${id}`, { headers, credentials: "include" }),
-        fetch(`${API_URL}/api/documents?tenant_id=${id}`, { headers, credentials: "include" })
+        api.get(`/api/tenants/${id}`),
+        api.get(`/api/leases?tenant_id=${id}`),
+        api.get(`/api/documents?tenant_id=${id}`)
       ]);
 
-      if (tenantRes.ok) {
-        const tenantData = await tenantRes.json();
-        setTenant(tenantData);
-        setEditData({
-          full_name: tenantData.full_name,
-          phone: tenantData.phone || "",
-          email: tenantData.email || ""
-        });
+      const tenantData = tenantRes.data;
+      setTenant(tenantData);
+      setEditData({
+        full_name: tenantData.full_name,
+        phone: tenantData.phone || "",
+        email: tenantData.email || ""
+      });
+
+      const leasesData = leasesRes.data;
+      const activeLease = leasesData.find(l => l.active);
+      setLease(activeLease || null);
+
+      if (activeLease) {
+        const paymentsRes = await api.get(`/api/payments?lease_id=${activeLease.lease_id}`);
+        setPayments(paymentsRes.data);
       }
 
-      if (leasesRes.ok) {
-        const leasesData = await leasesRes.json();
-        const activeLease = leasesData.find(l => l.active);
-        setLease(activeLease || null);
-
-        // Fetch payments for active lease
-        if (activeLease) {
-          const paymentsRes = await fetch(`${API_URL}/api/payments?lease_id=${activeLease.lease_id}`, { headers, credentials: "include" });
-          if (paymentsRes.ok) {
-            setPayments(await paymentsRes.json());
-          }
-        }
-      }
-
-      if (docsRes.ok) {
-        setDocuments(await docsRes.json());
-      }
+      setDocuments(docsRes.data);
     } catch (error) {
       toast.error("Erreur lors du chargement");
     } finally {
@@ -78,18 +61,10 @@ export default function LocataireDetails() {
 
   const handleUpdateTenant = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/tenants/${id}`, {
-        method: "PUT",
-        headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(editData)
-      });
-
-      if (response.ok) {
-        toast.success("Informations mises à jour");
-        setEditing(false);
-        fetchTenantDetails();
-      }
+      await api.put(`/api/tenants/${id}`, editData);
+      toast.success("Informations mises à jour");
+      setEditing(false);
+      fetchTenantDetails();
     } catch (error) {
       toast.error("Erreur lors de la mise à jour");
     }
@@ -100,26 +75,17 @@ export default function LocataireDetails() {
       toast.error("Veuillez sélectionner un fichier et entrer un nom");
       return;
     }
-
     const formData = new FormData();
     formData.append("file", documentFile);
     formData.append("name", documentName);
     formData.append("doc_type", documentType);
 
     try {
-      const response = await fetch(`${API_URL}/api/tenants/${id}/documents`, {
-        method: "POST",
-        headers: getAuthHeaders(),
-        credentials: "include",
-        body: formData
-      });
-
-      if (response.ok) {
-        toast.success("Document uploadé");
-        setDocumentFile(null);
-        setDocumentName("");
-        fetchTenantDetails();
-      }
+      await api.post(`/api/tenants/${id}/documents`, formData);
+      toast.success("Document uploadé");
+      setDocumentFile(null);
+      setDocumentName("");
+      fetchTenantDetails();
     } catch (error) {
       toast.error("Erreur lors de l'upload");
     }
@@ -130,23 +96,14 @@ export default function LocataireDetails() {
       toast.error("Veuillez sélectionner un fichier");
       return;
     }
-
     const formData = new FormData();
     formData.append("file", contractFile);
 
     try {
-      const response = await fetch(`${API_URL}/api/leases/${lease.lease_id}/contract`, {
-        method: "POST",
-        headers: getAuthHeaders(),
-        credentials: "include",
-        body: formData
-      });
-
-      if (response.ok) {
-        toast.success("Contrat uploadé");
-        setContractFile(null);
-        fetchTenantDetails();
-      }
+      await api.post(`/api/leases/${lease.lease_id}/contract`, formData);
+      toast.success("Contrat uploadé");
+      setContractFile(null);
+      fetchTenantDetails();
     } catch (error) {
       toast.error("Erreur lors de l'upload");
     }
@@ -154,18 +111,10 @@ export default function LocataireDetails() {
 
   const handleDeleteDocument = async (documentId) => {
     if (!confirm("Supprimer ce document ?")) return;
-
     try {
-      const response = await fetch(`${API_URL}/api/documents/${documentId}`, {
-        method: "DELETE",
-        headers: getAuthHeaders(),
-        credentials: "include"
-      });
-
-      if (response.ok) {
-        toast.success("Document supprimé");
-        fetchTenantDetails();
-      }
+      await api.delete(`/api/documents/${documentId}`);
+      toast.success("Document supprimé");
+      fetchTenantDetails();
     } catch (error) {
       toast.error("Erreur lors de la suppression");
     }
@@ -337,7 +286,7 @@ export default function LocataireDetails() {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => window.open(`${API_URL}/api/files/${lease.contract_file_path}`, "_blank")}
+                    onClick={() => window.open(`${process.env.REACT_APP_BACKEND_URL}/api/files/${lease.contract_file_path}`, "_blank")}
                     data-testid="view-contract-btn"
                   >
                     Voir
@@ -413,7 +362,7 @@ export default function LocataireDetails() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => window.open(`${API_URL}/api/files/${doc.file_path}`, "_blank")}
+                          onClick={() => window.open(`${process.env.REACT_APP_BACKEND_URL}/api/files/${doc.file_path}`, "_blank")}
                           data-testid={`view-doc-${doc.document_id}`}
                         >
                           Voir

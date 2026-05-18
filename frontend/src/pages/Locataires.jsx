@@ -6,8 +6,7 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import { toast } from "sonner";
-
-const API_URL = process.env.REACT_APP_BACKEND_URL;
+import api from "../services/api";
 
 export default function Locataires() {
   const [tenants, setTenants] = useState([]);
@@ -20,21 +19,10 @@ export default function Locataires() {
     fetchTenants();
   }, []);
 
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem("propria_token");
-    return token ? { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" } : { "Content-Type": "application/json" };
-  };
-
   const fetchTenants = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/tenants`, {
-        headers: getAuthHeaders(),
-        credentials: "include"
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setTenants(data);
-      }
+      const response = await api.get("/api/tenants");
+      setTenants(response.data);
     } catch (error) {
       toast.error("Erreur lors du chargement des locataires");
     } finally {
@@ -47,21 +35,12 @@ export default function Locataires() {
       toast.error("Le nom est obligatoire");
       return;
     }
-
     try {
-      const response = await fetch(`${API_URL}/api/tenants`, {
-        method: "POST",
-        headers: getAuthHeaders(),
-        credentials: "include",
-        body: JSON.stringify(newTenant)
-      });
-
-      if (response.ok) {
-        toast.success("Locataire ajouté");
-        setNewTenant({ full_name: "", phone: "", email: "" });
-        setShowAddTenant(false);
-        fetchTenants();
-      }
+      await api.post("/api/tenants", newTenant);
+      toast.success("Locataire ajouté");
+      setNewTenant({ full_name: "", phone: "", email: "" });
+      setShowAddTenant(false);
+      fetchTenants();
     } catch (error) {
       toast.error("Erreur lors de l'ajout");
     }
