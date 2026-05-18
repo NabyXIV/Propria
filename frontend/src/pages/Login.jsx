@@ -5,8 +5,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { toast } from "sonner";
-
-const API_URL = process.env.REACT_APP_BACKEND_URL;
+import api from "../services/api";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -26,26 +25,16 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-
     try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || "Identifiants invalides");
-      }
-
-      const data = await response.json();
+      const response = await api.post("/api/auth/login", { email, password });
+      const data = response.data;
       localStorage.setItem("propria_token", data.access_token);
       localStorage.setItem("propria_user", JSON.stringify(data.user));
       toast.success("Connexion réussie");
       navigate("/dashboard");
     } catch (error) {
-      toast.error(error.message);
+      const message = error.response?.data?.detail || "Identifiants invalides";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
@@ -57,50 +46,77 @@ export default function Login() {
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
   };
 
+  const handleDemoLogin = () => {
+    const fakeToken = "demo_token_local_only";
+    const fakeUser = {
+      user_id: "demo_001",
+      name: "Admin Démo",
+      email: "admin@propria.sn",
+      picture: null
+    };
+    localStorage.setItem("propria_token", fakeToken);
+    localStorage.setItem("propria_user", JSON.stringify(fakeUser));
+    navigate("/dashboard");
+  };
+
   return (
     <div className="min-h-screen flex bg-[var(--background)]">
       {/* Left Side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[var(--sidebar)] flex-col justify-center items-center p-12">
-        <div className="max-w-md text-center">
-          <div className="w-20 h-20 bg-[var(--primary)] rounded-2xl flex items-center justify-center mx-auto mb-8">
+      <div className="hidden lg:flex lg:w-1/2 flex-col justify-center items-center p-12 relative overflow-hidden"
+           style={{ background: 'linear-gradient(145deg, #A7D8C8 0%, #8FCAB8 40%, #7ABCAA 100%)' }}>
+
+        <div style={{
+          position: 'absolute', top: '-60px', right: '-60px',
+          width: '240px', height: '240px',
+          background: 'rgba(255,255,255,0.12)',
+          borderRadius: '50%',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '-40px', left: '-40px',
+          width: '180px', height: '180px',
+          background: 'rgba(255,255,255,0.08)',
+          borderRadius: '50%',
+        }} />
+
+        <div className="max-w-md text-center relative z-10">
+          <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-8"
+               style={{ background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.3)' }}>
             <Building2 className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl font-bold text-[var(--primary)] mb-4">DORA</h1>
-          <p className="text-lg text-[var(--primary)]/80 mb-8">
+          <h1 className="text-4xl font-bold mb-3" style={{ color: '#1E2B28', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.03em' }}>
+            Propria
+          </h1>
+          <p className="text-lg mb-10" style={{ color: 'rgba(30,43,40,0.7)' }}>
             Gestion locative professionnelle simplifiée
           </p>
           <div className="space-y-4 text-left">
-            <div className="flex items-center gap-3 text-[var(--primary)]/70">
-              <div className="w-8 h-8 rounded-full bg-[var(--primary)]/20 flex items-center justify-center">
-                <span className="text-sm font-semibold text-[var(--primary)]">1</span>
+            {[
+              "Gérez vos biens immobiliers",
+              "Suivez vos locataires et paiements",
+              "Automatisez vos relances"
+            ].map((text, i) => (
+              <div key={i} className="flex items-center gap-4"
+                   style={{ background: 'rgba(255,255,255,0.2)', borderRadius: '12px', padding: '12px 16px', backdropFilter: 'blur(6px)' }}>
+                <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
+                     style={{ background: 'rgba(255,255,255,0.35)' }}>
+                  <span className="text-sm font-bold" style={{ color: '#1E2B28' }}>{i + 1}</span>
+                </div>
+                <span style={{ color: '#1E2B28', fontWeight: '500', fontSize: '15px' }}>{text}</span>
               </div>
-              <span>Gérez vos biens immobiliers</span>
-            </div>
-            <div className="flex items-center gap-3 text-[var(--primary)]/70">
-              <div className="w-8 h-8 rounded-full bg-[var(--primary)]/20 flex items-center justify-center">
-                <span className="text-sm font-semibold text-[var(--primary)]">2</span>
-              </div>
-              <span>Suivez vos locataires et paiements</span>
-            </div>
-            <div className="flex items-center gap-3 text-[var(--primary)]/70">
-              <div className="w-8 h-8 rounded-full bg-[var(--primary)]/20 flex items-center justify-center">
-                <span className="text-sm font-semibold text-[var(--primary)]">3</span>
-              </div>
-              <span>Automatisez vos relances</span>
-            </div>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Right Side - Login Form */}
-      <div className="flex-1 flex flex-col justify-center items-center p-8">
+      <div className="flex-1 flex flex-col justify-center items-center p-8 login-right">
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden text-center mb-8">
             <div className="w-16 h-16 bg-[var(--primary)] rounded-2xl flex items-center justify-center mx-auto mb-4">
               <Building2 className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-[var(--primary)]">DORA</h1>
+            <h1 className="text-3xl font-bold text-[var(--primary)]">Propria</h1>
           </div>
 
           <div className="propria-card">
@@ -193,9 +209,28 @@ export default function Login() {
               Continuer avec Google
             </Button>
 
-            <p className="mt-6 text-center text-sm text-[var(--muted-foreground)]">
-              Compte démo: <span className="font-medium">admin@example.com</span> / <span className="font-medium">AdminPassword123</span>
-            </p>
+            {process.env.REACT_APP_SHOW_DEMO === "true" && (
+              <>
+                <div className="relative my-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-[var(--border)]"></div>
+                  </div>
+                  <div className="relative flex justify-center text-xs">
+                    <span className="px-3 bg-[var(--card)] text-[var(--muted-foreground)]">
+                      mode développement
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleDemoLogin}
+                  className="w-full py-2 px-4 rounded-xl border border-dashed border-[var(--border)] text-sm text-[var(--muted-foreground)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"
+                >
+                  Connexion démo (dev uniquement)
+                </button>
+              </>
+            )}
+
           </div>
         </div>
       </div>

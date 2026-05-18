@@ -6,83 +6,87 @@
 
 :root {
   /* Propria Light Theme */
-  --background: #F5F7F6;
-  --sidebar: #A7D8C8;
-  --primary: #5F8D7E;
+  --background: #F2F5F3;
+  --sidebar: #B8DDD0;
+  --sidebar-deep: #A7D8C8;
+  --primary: #4E7A6C;
+  --primary-hover: #3D6357;
   --primary-foreground: #FFFFFF;
-  --text: #2F3A38;
+  --text: #1E2B28;
+  --text-secondary: #4A5E59;
   --card: #FFFFFF;
-  --card-foreground: #2F3A38;
-  --border: rgba(95, 141, 126, 0.2);
-  --muted: #F0F2F1;
+  --card-foreground: #1E2B28;
+  --border: rgba(78, 122, 108, 0.15);
+  --border-strong: rgba(78, 122, 108, 0.3);
+  --muted: #EDF0EE;
   --muted-foreground: #6B7C75;
-  --accent: #5F8D7E;
+  --accent: #4E7A6C;
   --accent-foreground: #FFFFFF;
-  --destructive: #EF4444;
+  --destructive: #E53E3E;
   --destructive-foreground: #FFFFFF;
-  --success: #10B981;
-  --warning: #F59E0B;
-  --input: #F0F2F1;
-  --ring: #5F8D7E;
+  --success: #0D9488;
+  --warning: #D97706;
+  --input: #F0F4F2;
+  --ring: #4E7A6C;
   --radius: 0.875rem;
-  
+
   --popover: #FFFFFF;
-  --popover-foreground: #2F3A38;
-  --secondary: #F0F2F1;
-  --secondary-foreground: #2F3A38;
-  
-  --chart-1: #5F8D7E;
+  --popover-foreground: #1E2B28;
+  --secondary: #EDF0EE;
+  --secondary-foreground: #1E2B28;
+
+  --shadow-sm: 0 1px 3px rgba(30, 43, 40, 0.06), 0 1px 2px rgba(30, 43, 40, 0.04);
+  --shadow-md: 0 4px 16px rgba(30, 43, 40, 0.08), 0 2px 6px rgba(30, 43, 40, 0.04);
+  --shadow-lg: 0 12px 32px rgba(30, 43, 40, 0.1), 0 4px 12px rgba(30, 43, 40, 0.06);
+
+  --chart-1: #4E7A6C;
   --chart-2: #A7D8C8;
   --chart-3: #7FA99B;
-  --chart-4: #4a7063;
-  --chart-5: #2F3A38;
+  --chart-4: #3D6357;
+  --chart-5: #1E2B28;
 }
 
 [data-theme="dark"],
 .dark {
   /* Propria Dark Theme */
-  --background: #1A1D1C;
-  --sidebar: #151917;
-  --primary: #7FA99B;
-  --primary-foreground: #1A1D1C;
-  --text: #E0E6E4;
-  --card: #242B29;
-  --card-foreground: #E0E6E4;
-  --border: rgba(127, 169, 155, 0.2);
-  --muted: #2C3331;
-  --muted-foreground: #9CA3AF;
-  --accent: #7FA99B;
-  --accent-foreground: #1A1D1C;
-  --destructive: #F87171;
-  --destructive-foreground: #1A1D1C;
-  --success: #34D399;
+  --background: #141918;
+  --sidebar: #111614;
+  --sidebar-deep: #0D1210;
+  --primary: #6BA898;
+  --primary-hover: #7FBDAD;
+  --primary-foreground: #0D1210;
+  --text: #E4EBE8;
+  --text-secondary: #9AB0AA;
+  --card: #1C2422;
+  --card-foreground: #E4EBE8;
+  --border: rgba(107, 168, 152, 0.15);
+  --border-strong: rgba(107, 168, 152, 0.25);
+  --muted: #222B28;
+  --muted-foreground: #8A9E99;
+  --accent: #6BA898;
+  --accent-foreground: #0D1210;
+  --destructive: #FC8181;
+  --destructive-foreground: #0D1210;
+  --success: #2DD4BF;
   --warning: #FBBF24;
-  --input: #2C3331;
-  --ring: #7FA99B;
-  
-  --popover: #242B29;
-  --popover-foreground: #E0E6E4;
-  --secondary: #2C3331;
-  --secondary-foreground: #E0E6E4;
-  
+  --input: #222B28;
+  --ring: #6BA898;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.25);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.35);
+
+  --popover: #1C2422;
+  --popover-foreground: #E4EBE8;
+  --secondary: #222B28;
+  --secondary-foreground: #E4EBE8;
+
   color-scheme: dark;
 }
 
-[data-theme="dark"] body,
-.dark body {
-  background-color: var(--background);
-  color: var(--text);
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  background-color: var(--background);
-}
+html { background-color: var(--background); }
 
 body {
   font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -91,116 +95,140 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
-}
-
-[data-theme="dark"] body {
-  background-color: #1A1D1C;
-  color: #E0E6E4;
+  font-size: 15px;
+  line-height: 1.6;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.02em;
 }
 
 @layer base {
-  * {
-    @apply border-[var(--border)];
-  }
-  body {
-    @apply bg-[var(--background)] text-[var(--text)];
-  }
+  * { @apply border-[var(--border)]; }
+  body { @apply bg-[var(--background)] text-[var(--text)]; }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--muted);
-  border-radius: 4px;
-}
-
+/* ── Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 4px;
-  opacity: 0.5;
+  background: var(--border-strong);
+  border-radius: 3px;
 }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-::-webkit-scrollbar-thumb:hover {
-  opacity: 0.8;
-}
-
-/* Card styles */
+/* ── Cards ─────────────────────────────────────────────── */
 .propria-card {
   background: var(--card);
   border-radius: 16px;
-  box-shadow: 0 2px 10px rgba(47, 58, 56, 0.05);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  padding: 24px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.propria-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.propria-card-flat {
+  background: var(--card);
+  border-radius: 16px;
   border: 1px solid var(--border);
   padding: 24px;
 }
 
-.propria-card:hover {
-  box-shadow: 0 10px 30px rgba(47, 58, 56, 0.08);
+/* ── Stat cards ─────────────────────────────────────────── */
+.stat-card {
+  background: var(--card);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Button styles */
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--primary);
+  opacity: 0.4;
+  border-radius: 16px 16px 0 0;
+}
+
+.stat-card.danger::before { background: var(--destructive); opacity: 0.6; }
+.stat-card.success::before { background: var(--success); opacity: 0.6; }
+
+.stat-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* ── Buttons ────────────────────────────────────────────── */
 .propria-btn-primary {
   background: var(--primary);
   color: var(--primary-foreground);
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 10px 20px;
-  font-weight: 500;
-  transition: all 0.2s;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.18s ease;
   border: none;
   cursor: pointer;
+  letter-spacing: 0.01em;
 }
 
 .propria-btn-primary:hover {
-  background: #4a7063;
+  background: var(--primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(95, 141, 126, 0.3);
+  box-shadow: 0 4px 14px rgba(78, 122, 108, 0.35);
 }
 
-.propria-btn-primary:active {
-  transform: scale(0.98);
-}
+.propria-btn-primary:active { transform: scale(0.98); }
 
 .propria-btn-secondary {
-  background: var(--card);
+  background: transparent;
   color: var(--primary);
-  border: 1px solid var(--primary);
-  border-radius: 12px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 10px;
   padding: 10px 20px;
   font-weight: 500;
-  transition: all 0.2s;
+  font-size: 14px;
+  transition: all 0.18s ease;
   cursor: pointer;
 }
 
 .propria-btn-secondary:hover {
-  background: rgba(95, 141, 126, 0.1);
+  background: rgba(78, 122, 108, 0.08);
+  border-color: var(--primary);
 }
 
-/* Input styles */
+/* ── Inputs ─────────────────────────────────────────────── */
 .propria-input {
   background: var(--input);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: 10px;
-  padding: 12px 16px;
+  padding: 11px 16px;
   font-size: 14px;
   color: var(--text);
-  transition: all 0.2s;
+  transition: all 0.18s ease;
   width: 100%;
+  font-family: 'DM Sans', sans-serif;
 }
 
 .propria-input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(95, 141, 126, 0.1);
+  background: var(--card);
+  box-shadow: 0 0 0 3px rgba(78, 122, 108, 0.12);
 }
 
-/* Table styles */
+/* ── Table ──────────────────────────────────────────────── */
 .propria-table {
   width: 100%;
   border-collapse: collapse;
@@ -208,48 +236,59 @@ h1, h2, h3, h4, h5, h6 {
 
 .propria-table th {
   background: var(--muted);
-  padding: 12px 16px;
+  padding: 11px 16px;
   text-align: left;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.07em;
   color: var(--muted-foreground);
 }
 
+.propria-table th:first-child { border-radius: 8px 0 0 8px; }
+.propria-table th:last-child { border-radius: 0 8px 8px 0; }
+
 .propria-table td {
-  padding: 16px;
+  padding: 15px 16px;
   border-bottom: 1px solid var(--border);
   font-size: 14px;
+  color: var(--text);
 }
 
-.propria-table tr:hover {
-  background: rgba(95, 141, 126, 0.03);
+.propria-table tr:last-child td { border-bottom: none; }
+
+.propria-table tbody tr {
+  transition: background 0.15s ease;
 }
 
-/* Badge styles */
+.propria-table tbody tr:hover {
+  background: rgba(78, 122, 108, 0.04);
+}
+
+/* ── Badges ─────────────────────────────────────────────── */
 .badge-paid {
-  background: rgba(16, 185, 129, 0.1);
-  color: #059669;
-  padding: 4px 12px;
+  background: rgba(13, 148, 136, 0.1);
+  color: #0D9488;
+  padding: 3px 10px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .badge-late {
-  background: rgba(239, 68, 68, 0.1);
-  color: #DC2626;
-  padding: 4px 12px;
+  background: rgba(229, 62, 62, 0.1);
+  color: #E53E3E;
+  padding: 3px 10px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
 }
 
 .badge-verify {
-  background: rgba(245, 158, 11, 0.1);
+  background: rgba(217, 119, 6, 0.1);
   color: #D97706;
-  padding: 4px 12px;
+  padding: 3px 10px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
@@ -258,16 +297,16 @@ h1, h2, h3, h4, h5, h6 {
 .badge-unpaid {
   background: var(--muted);
   color: var(--muted-foreground);
-  padding: 4px 12px;
+  padding: 3px 10px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
 }
 
 .badge-occupied {
-  background: rgba(95, 141, 126, 0.1);
+  background: rgba(78, 122, 108, 0.1);
   color: var(--primary);
-  padding: 4px 12px;
+  padding: 3px 10px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
@@ -276,149 +315,153 @@ h1, h2, h3, h4, h5, h6 {
 .badge-vacant {
   background: var(--muted);
   color: var(--muted-foreground);
-  padding: 4px 12px;
+  padding: 3px 10px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
 }
 
 .badge-active {
-  background: rgba(16, 185, 129, 0.1);
-  color: #059669;
-  padding: 4px 12px;
+  background: rgba(13, 148, 136, 0.1);
+  color: #0D9488;
+  padding: 3px 10px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
 }
 
-/* Sidebar active item */
+/* ── Sidebar ────────────────────────────────────────────── */
 .sidebar-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border-radius: 12px;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
   font-weight: 500;
-  transition: all 0.2s;
+  font-size: 14px;
+  transition: all 0.18s ease;
   color: var(--primary);
   text-decoration: none;
+  position: relative;
 }
 
 .sidebar-item:hover {
-  background: rgba(95, 141, 126, 0.15);
+  background: rgba(78, 122, 108, 0.18);
 }
 
 .sidebar-item.active {
   background: var(--primary);
   color: white;
+  box-shadow: 0 2px 8px rgba(78, 122, 108, 0.3);
 }
 
+.sidebar-item.active::before {
+  content: '';
+  position: absolute;
+  left: -3px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: white;
+  border-radius: 0 2px 2px 0;
+  opacity: 0.6;
+}
+
+/* ── Dark mode overrides ────────────────────────────────── */
+[data-theme="dark"] .propria-card,
+.dark .propria-card {
+  background: var(--card);
+  border-color: var(--border);
+}
+
+.login-right {
+  background: linear-gradient(160deg, #F5FAF7 0%, #EDF5F1 100%);
+}
+
+[data-theme="dark"] .login-right,
+.dark .login-right {
+  background: var(--background);
+}
+
+[data-theme="dark"] .stat-card,
+.dark .stat-card {
+  background: var(--card);
+}
+
+[data-theme="dark"] .sidebar-item { color: var(--primary); }
 [data-theme="dark"] .sidebar-item.active {
   background: var(--primary);
   color: var(--primary-foreground);
+  box-shadow: 0 2px 8px rgba(107, 168, 152, 0.2);
 }
 
-[data-theme="dark"] .propria-card,
-.dark .propria-card {
-  background: #242B29;
-  border-color: rgba(127, 169, 155, 0.2);
+[data-theme="dark"] .propria-table th {
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+[data-theme="dark"] .propria-table td {
+  border-color: var(--border);
+  color: var(--text);
+}
+[data-theme="dark"] .propria-input {
+  background: var(--input);
+  border-color: var(--border);
+  color: var(--text);
 }
 
-[data-theme="dark"] .sidebar-item.active,
-.dark .sidebar-item.active {
-  background: #7FA99B;
-  color: #1A1D1C;
+/* ── Animations ─────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-[data-theme="dark"] .sidebar-item,
-.dark .sidebar-item {
-  color: #7FA99B;
-}
-
-[data-theme="dark"] .propria-table th,
-.dark .propria-table th {
-  background: #2C3331;
-  color: #9CA3AF;
-}
-
-[data-theme="dark"] .propria-table td,
-.dark .propria-table td {
-  border-color: rgba(127, 169, 155, 0.2);
-  color: #E0E6E4;
-}
-
-[data-theme="dark"] .propria-input,
-.dark .propria-input {
-  background: #2C3331;
-  border-color: rgba(127, 169, 155, 0.2);
-  color: #E0E6E4;
-}
-
-/* Animation */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out;
-}
+.animate-fade-in { animation: fadeInUp 0.3s ease-out; }
 
-/* Status filter buttons */
+/* ── Status filters ─────────────────────────────────────── */
 .status-filter {
   display: inline-flex;
-  padding: 6px 14px;
+  padding: 5px 14px;
   border-radius: 20px;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
-  border: 1px solid var(--border);
+  transition: all 0.18s ease;
+  border: 1.5px solid var(--border);
   background: var(--card);
+  color: var(--text-secondary);
 }
 
-.status-filter:hover {
-  border-color: var(--primary);
+.status-filter:hover { border-color: var(--primary); color: var(--primary); }
+.status-filter.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 2px 8px rgba(78,122,108,0.25); }
+.status-filter.paid { border-color: rgba(13,148,136,0.4); color: #0D9488; }
+.status-filter.paid.active { background: #0D9488; color: white; border-color: #0D9488; }
+.status-filter.late { border-color: rgba(229,62,62,0.4); color: #E53E3E; }
+.status-filter.late.active { background: #E53E3E; color: white; border-color: #E53E3E; }
+.status-filter.verify { border-color: rgba(217,119,6,0.4); color: #D97706; }
+.status-filter.verify.active { background: #D97706; color: white; border-color: #D97706; }
+
+/* ── Responsive tables ──────────────────────────────────── */
+@media (max-width: 767px) {
+  .propria-table { font-size: 13px; }
+  .propria-table th,
+  .propria-table td { padding: 10px; }
+  .propria-table .hide-mobile { display: none; }
 }
 
-.status-filter.active {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
+/* ── Responsive cards ───────────────────────────────────── */
+@media (max-width: 767px) {
+  .propria-card { padding: 16px; border-radius: 12px; }
+  .stat-card { padding: 16px; border-radius: 12px; }
 }
 
-.status-filter.paid {
-  border-color: #10B981;
-  color: #059669;
-}
-
-.status-filter.paid.active {
-  background: #10B981;
-  color: white;
-}
-
-.status-filter.late {
-  border-color: #EF4444;
-  color: #DC2626;
-}
-
-.status-filter.late.active {
-  background: #EF4444;
-  color: white;
-}
-
-.status-filter.verify {
-  border-color: #F59E0B;
-  color: #D97706;
-}
-
-.status-filter.verify.active {
-  background: #F59E0B;
-  color: white;
+/* ── Responsive typography ──────────────────────────────── */
+@media (max-width: 767px) {
+  h1 { font-size: 1.5rem !important; }
+  h2 { font-size: 1.1rem !important; }
 }

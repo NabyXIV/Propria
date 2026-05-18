@@ -5,8 +5,7 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { toast } from "sonner";
-
-const API_URL = process.env.REACT_APP_BACKEND_URL;
+import api from "../services/api";
 
 export default function Documents() {
   const [documents, setDocuments] = useState([]);
@@ -22,31 +21,18 @@ export default function Documents() {
     fetchData();
   }, [selectedTenant]);
 
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem("propria_token");
-    return token ? { "Authorization": `Bearer ${token}` } : {};
-  };
-
   const fetchData = async () => {
     try {
-      const headers = getAuthHeaders();
-      
-      let docsUrl = `${API_URL}/api/documents`;
-      if (selectedTenant && selectedTenant !== "all") {
-        docsUrl += `?tenant_id=${selectedTenant}`;
-      }
+      const url = selectedTenant && selectedTenant !== "all"
+        ? `/api/documents?tenant_id=${selectedTenant}`
+        : "/api/documents";
 
       const [docsRes, tenantsRes] = await Promise.all([
-        fetch(docsUrl, { headers, credentials: "include" }),
-        fetch(`${API_URL}/api/tenants`, { headers, credentials: "include" })
+        api.get(url),
+        api.get("/api/tenants")
       ]);
-
-      if (docsRes.ok) {
-        setDocuments(await docsRes.json());
-      }
-      if (tenantsRes.ok) {
-        setTenants(await tenantsRes.json());
-      }
+      setDocuments(docsRes.data);
+      setTenants(tenantsRes.data);
     } catch (error) {
       toast.error("Erreur lors du chargement");
     } finally {
@@ -59,27 +45,18 @@ export default function Documents() {
       toast.error("Veuillez remplir tous les champs");
       return;
     }
-
     const formData = new FormData();
     formData.append("file", documentFile);
     formData.append("name", documentName);
     formData.append("doc_type", documentType);
 
     try {
-      const response = await fetch(`${API_URL}/api/tenants/${uploadTenant}/documents`, {
-        method: "POST",
-        headers: getAuthHeaders(),
-        credentials: "include",
-        body: formData
-      });
-
-      if (response.ok) {
-        toast.success("Document uploadé");
-        setDocumentFile(null);
-        setDocumentName("");
-        setUploadTenant("");
-        fetchData();
-      }
+      await api.post(`/api/tenants/${uploadTenant}/documents`, formData);
+      toast.success("Document uploadé");
+      setDocumentFile(null);
+      setDocumentName("");
+      setUploadTenant("");
+      fetchData();
     } catch (error) {
       toast.error("Erreur lors de l'upload");
     }
@@ -87,18 +64,10 @@ export default function Documents() {
 
   const handleDeleteDocument = async (documentId) => {
     if (!confirm("Supprimer ce document ?")) return;
-
     try {
-      const response = await fetch(`${API_URL}/api/documents/${documentId}`, {
-        method: "DELETE",
-        headers: getAuthHeaders(),
-        credentials: "include"
-      });
-
-      if (response.ok) {
-        toast.success("Document supprimé");
-        fetchData();
-      }
+      await api.delete(`/api/documents/${documentId}`);
+      toast.success("Document supprimé");
+      fetchData();
     } catch (error) {
       toast.error("Erreur lors de la suppression");
     }
@@ -254,7 +223,7 @@ export default function Documents() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => window.open(`${API_URL}/api/files/${doc.file_path}`, "_blank")}
+                            onClick={() => window.open(`${process.env.REACT_APP_BACKEND_URL}/api/files/${doc.file_path}`, "_blank")}
                             data-testid={`view-doc-${doc.document_id}`}
                           >
                             <Eye className="w-4 h-4" />

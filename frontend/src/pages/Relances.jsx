@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { Bell, AlertTriangle, Copy, Check, Send } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { toast } from "sonner";
-
-const API_URL = process.env.REACT_APP_BACKEND_URL;
+import api from "../services/api";
 
 export default function Relances() {
   const [latePayments, setLatePayments] = useState([]);
@@ -17,26 +16,14 @@ export default function Relances() {
     fetchData();
   }, []);
 
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem("propria_token");
-    return token ? { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" } : { "Content-Type": "application/json" };
-  };
-
   const fetchData = async () => {
     try {
-      const headers = getAuthHeaders();
-      
       const [paymentsRes, remindersRes] = await Promise.all([
-        fetch(`${API_URL}/api/payments?status=LATE`, { headers, credentials: "include" }),
-        fetch(`${API_URL}/api/reminders`, { headers, credentials: "include" })
+        api.get("/api/payments?status=LATE"),
+        api.get("/api/reminders")
       ]);
-
-      if (paymentsRes.ok) {
-        setLatePayments(await paymentsRes.json());
-      }
-      if (remindersRes.ok) {
-        setReminders(await remindersRes.json());
-      }
+      setLatePayments(paymentsRes.data);
+      setReminders(remindersRes.data);
     } catch (error) {
       toast.error("Erreur lors du chargement");
     } finally {
@@ -68,49 +55,23 @@ Propria - Gestion Locative`;
 
   const sendReminder = async () => {
     if (!selectedPayment) return;
-
     try {
-      // Find tenant_id from payment
-      const tenant = latePayments.find(p => p.payment_id === selectedPayment.payment_id);
-      if (!tenant) {
-        toast.error("Locataire non trouvé");
-        return;
-      }
-
-      // Get leases to find tenant_id
-      const leasesRes = await fetch(`${API_URL}/api/leases`, {
-        headers: getAuthHeaders(),
-        credentials: "include"
-      });
-      
-      if (!leasesRes.ok) throw new Error();
-      
-      const leases = await leasesRes.json();
-      const lease = leases.find(l => l.lease_id === selectedPayment.lease_id);
-      
+      const leasesRes = await api.get("/api/leases");
+      const lease = leasesRes.data.find(l => l.lease_id === selectedPayment.lease_id);
       if (!lease) {
         toast.error("Bail non trouvé");
         return;
       }
-
-      const response = await fetch(`${API_URL}/api/reminders`, {
-        method: "POST",
-        headers: getAuthHeaders(),
-        credentials: "include",
-        body: JSON.stringify({
-          tenant_id: lease.tenant_id,
-          payment_id: selectedPayment.payment_id,
-          template_type: "sms",
-          channel: "sms"
-        })
+      await api.post("/api/reminders", {
+        tenant_id: lease.tenant_id,
+        payment_id: selectedPayment.payment_id,
+        template_type: "sms",
+        channel: "sms"
       });
-
-      if (response.ok) {
-        toast.success("Relance enregistrée");
-        setGeneratedMessage("");
-        setSelectedPayment(null);
-        fetchData();
-      }
+      toast.success("Relance enregistrée");
+      setGeneratedMessage("");
+      setSelectedPayment(null);
+      fetchData();
     } catch (error) {
       toast.error("Erreur lors de l'envoi");
     }

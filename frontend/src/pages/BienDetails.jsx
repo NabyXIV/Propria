@@ -6,8 +6,7 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import { toast } from "sonner";
-
-const API_URL = process.env.REACT_APP_BACKEND_URL;
+import api from "../services/api";
 
 export default function BienDetails() {
   const { id } = useParams();
@@ -22,24 +21,14 @@ export default function BienDetails() {
     fetchBuildingDetails();
   }, [id]);
 
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem("propria_token");
-    return token ? { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" } : { "Content-Type": "application/json" };
-  };
-
   const fetchBuildingDetails = async () => {
     try {
       const [buildingRes, unitsRes] = await Promise.all([
-        fetch(`${API_URL}/api/buildings/${id}`, { headers: getAuthHeaders(), credentials: "include" }),
-        fetch(`${API_URL}/api/units?building_id=${id}`, { headers: getAuthHeaders(), credentials: "include" })
+        api.get(`/api/buildings/${id}`),
+        api.get(`/api/units?building_id=${id}`)
       ]);
-
-      if (buildingRes.ok) {
-        setBuilding(await buildingRes.json());
-      }
-      if (unitsRes.ok) {
-        setUnits(await unitsRes.json());
-      }
+      setBuilding(buildingRes.data);
+      setUnits(unitsRes.data);
     } catch (error) {
       toast.error("Erreur lors du chargement");
     } finally {
@@ -52,26 +41,17 @@ export default function BienDetails() {
       toast.error("Veuillez remplir le nom");
       return;
     }
-
     try {
-      const response = await fetch(`${API_URL}/api/units`, {
-        method: "POST",
-        headers: getAuthHeaders(),
-        credentials: "include",
-        body: JSON.stringify({
-          ...newUnit,
-          building_id: id,
-          floor: newUnit.floor ? parseInt(newUnit.floor) : null,
-          rooms: newUnit.rooms ? parseInt(newUnit.rooms) : null
-        })
+      await api.post("/api/units", {
+        ...newUnit,
+        building_id: id,
+        floor: newUnit.floor ? parseInt(newUnit.floor) : null,
+        rooms: newUnit.rooms ? parseInt(newUnit.rooms) : null
       });
-
-      if (response.ok) {
-        toast.success("Appartement ajouté");
-        setNewUnit({ name: "", floor: "", rooms: "" });
-        setShowAddUnit(false);
-        fetchBuildingDetails();
-      }
+      toast.success("Appartement ajouté");
+      setNewUnit({ name: "", floor: "", rooms: "" });
+      setShowAddUnit(false);
+      fetchBuildingDetails();
     } catch (error) {
       toast.error("Erreur lors de l'ajout");
     }
@@ -79,18 +59,10 @@ export default function BienDetails() {
 
   const handleDeleteUnit = async (unitId) => {
     if (!confirm("Supprimer cet appartement ?")) return;
-
     try {
-      const response = await fetch(`${API_URL}/api/units/${unitId}`, {
-        method: "DELETE",
-        headers: getAuthHeaders(),
-        credentials: "include"
-      });
-
-      if (response.ok) {
-        toast.success("Appartement supprimé");
-        fetchBuildingDetails();
-      }
+      await api.delete(`/api/units/${unitId}`);
+      toast.success("Appartement supprimé");
+      fetchBuildingDetails();
     } catch (error) {
       toast.error("Erreur lors de la suppression");
     }
