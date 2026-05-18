@@ -6,6 +6,10 @@ from app.routes.auth import router as auth_router
 from app.routes.buildings import router as buildings_router
 from app.routes.units import router as units_router
 from app.routes.tenants import router as tenants_router
+from app.routes.leases import router as leases_router
+from app.routes.payments import router as payments_router
+from app.routes.dashboard import router as dashboard_router
+
 load_dotenv()
 
 app = FastAPI(title="Propria API")
@@ -30,6 +34,10 @@ app.include_router(auth_router, prefix="/api")
 app.include_router(buildings_router, prefix="/api")
 app.include_router(units_router, prefix="/api")
 app.include_router(tenants_router, prefix="/api")
+app.include_router(leases_router, prefix="/api")
+app.include_router(payments_router, prefix="/api")
+app.include_router(dashboard_router, prefix="/api")
+
 @app.get("/")
 async def root():
     return {"message": "Propria API fonctionne !"}
