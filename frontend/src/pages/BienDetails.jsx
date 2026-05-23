@@ -214,15 +214,15 @@ export default function BienDetails() {
               </tr>
             </thead>
             <tbody>
-              {units.length === 0 ? (
+              {units.length === 0 && (
                 <tr>
                   <td colSpan={7} className="text-center text-[var(--muted-foreground)] py-8">
                     Aucun appartement
                   </td>
                 </tr>
-              ) : (
-                units.map((unit) => (
-                  <tr key={unit.unit_id} data-testid={`unit-detail-row-${unit.unit_id}`}>
+              )}
+              {units.map((unit) => (
+              <tr key={unit.unit_id} data-testid={`unit-detail-row-${unit.unit_id}`}>
                     <td className="font-medium">{unit.name}</td>
                     <td>{unit.floor || "---"}</td>
                     <td>{unit.rooms || "---"}</td>
@@ -246,8 +246,7 @@ export default function BienDetails() {
                       </div>
                     </td>
                   </tr>
-                ))
-              )}
+              ))}
             </tbody>
           </table>
         </div>

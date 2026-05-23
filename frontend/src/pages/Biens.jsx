@@ -18,6 +18,7 @@ export default function Biens() {
   const [showAddUnit, setShowAddUnit] = useState(false);
   const [newBuilding, setNewBuilding] = useState({ name: "", address: "" });
   const [newUnit, setNewUnit] = useState({ name: "", floor: "", rooms: "" });
+  const [isMounted, setIsMounted] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,6 +30,11 @@ export default function Biens() {
       fetchUnits(selectedBuilding.building_id);
     }
   }, [selectedBuilding]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsMounted(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   const fetchBuildings = async () => {
     try {
@@ -172,16 +178,16 @@ export default function Biens() {
                 </tr>
               </thead>
               <tbody>
-                {buildings.length === 0 ? (
+                {buildings.length === 0 && (
                   <tr>
                     <td colSpan={4} className="text-center text-[var(--muted-foreground)] py-8">
                       Aucun immeuble
                     </td>
                   </tr>
-                ) : (
-                  buildings.map((building) => (
-                    <tr 
-                      key={building.building_id} 
+                )}
+                {buildings.map((building) => (
+                <tr
+                  key={building.building_id} 
                       className={`cursor-pointer ${selectedBuilding?.building_id === building.building_id ? "bg-[var(--primary)]/5" : ""}`}
                       onClick={() => setSelectedBuilding(building)}
                       data-testid={`building-row-${building.building_id}`}
@@ -202,9 +208,8 @@ export default function Biens() {
                       </td>
                       <td>{building.unit_count}</td>
                       <td><span className="badge-active">Actif</span></td>
-                    </tr>
-                  ))
-                )}
+                </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -223,26 +228,34 @@ export default function Biens() {
                 </p>
               </div>
 
-              <div className="h-48">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={getOccupancyData()}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={40}
-                      outerRadius={70}
-                      paddingAngle={5}
-                      dataKey="value"
-                    >
-                      {getOccupancyData().map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
+              {isMounted ? (
+                <div style={{ width: '100%', height: '192px' }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={getOccupancyData()}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={40}
+                        outerRadius={70}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {getOccupancyData().map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div style={{ width: '100%', height: '192px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: '13px', color: 'var(--muted-foreground)' }}>
+                    Chargement...
+                  </span>
+                </div>
+              )}
             </>
           ) : (
             <p className="text-[var(--muted-foreground)] text-center py-8">
@@ -332,15 +345,15 @@ export default function Biens() {
                 </tr>
               </thead>
               <tbody>
-                {units.length === 0 ? (
+                {units.length === 0 && (
                   <tr>
                     <td colSpan={5} className="text-center text-[var(--muted-foreground)] py-8">
                       Aucun appartement
                     </td>
                   </tr>
-                ) : (
-                  units.slice(0, 5).map((unit) => (
-                    <tr key={unit.unit_id} data-testid={`unit-row-${unit.unit_id}`}>
+                )}
+                {units.slice(0, 5).map((unit) => (
+                <tr key={unit.unit_id} data-testid={`unit-row-${unit.unit_id}`}>
                       <td>
                         <div className="flex items-center gap-2">
                           <Home className="w-4 h-4 text-[var(--primary)]" />
@@ -375,9 +388,8 @@ export default function Biens() {
                           </Button>
                         )}
                       </td>
-                    </tr>
-                  ))
-                )}
+                </tr>
+                ))}
               </tbody>
             </table>
           </div>

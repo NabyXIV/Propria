@@ -135,15 +135,15 @@ export default function Locataires() {
               </tr>
             </thead>
             <tbody>
-              {tenants.length === 0 ? (
+              {tenants.length === 0 && (
                 <tr>
                   <td colSpan={6} className="text-center text-[var(--muted-foreground)] py-8">
                     Aucun locataire
                   </td>
                 </tr>
-              ) : (
-                tenants.map((tenant) => (
-                  <tr key={tenant.tenant_id} data-testid={`tenant-row-${tenant.tenant_id}`}>
+              )}
+              {tenants.map((tenant) => (
+              <tr key={tenant.tenant_id} data-testid={`tenant-row-${tenant.tenant_id}`}>
                     <td>
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-[var(--primary)]/10 flex items-center justify-center">
@@ -187,8 +187,7 @@ export default function Locataires() {
                       </Button>
                     </td>
                   </tr>
-                ))
-              )}
+              ))}
             </tbody>
           </table>
         </div>

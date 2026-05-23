@@ -20,10 +20,16 @@ export default function Dashboard() {
   const [recentPayments, setRecentPayments] = useState([]);
   const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchDashboardData();
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsMounted(true), 50);
+    return () => clearTimeout(timer);
   }, []);
 
   const fetchDashboardData = async () => {
@@ -172,40 +178,48 @@ export default function Dashboard() {
             <h2 className="text-lg font-semibold text-[var(--text)]">Évaluation des encaissements</h2>
             <span className="text-sm text-[var(--muted-foreground)]">Jan - Déc</span>
           </div>
-          <div className="h-48 lg:h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                <XAxis dataKey="month" stroke="var(--muted-foreground)" fontSize={12} />
-                <YAxis stroke="var(--muted-foreground)" fontSize={12} />
-                <Tooltip 
-                  contentStyle={{ 
-                    background: "var(--card)", 
-                    border: "1px solid var(--border)",
-                    borderRadius: "8px"
-                  }}
-                />
-                <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="paid" 
-                  stroke="#5F8D7E" 
-                  strokeWidth={2}
-                  name="Encaissé"
-                  dot={{ fill: "#5F8D7E" }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="expected" 
-                  stroke="#A7D8C8" 
-                  strokeWidth={2}
-                  strokeDasharray="5 5"
-                  name="Attendu"
-                  dot={{ fill: "#A7D8C8" }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+          {isMounted ? (
+            <div style={{ width: '100%', height: '256px' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                  <XAxis dataKey="month" stroke="var(--muted-foreground)" fontSize={12} />
+                  <YAxis stroke="var(--muted-foreground)" fontSize={12} />
+                  <Tooltip
+                    contentStyle={{
+                      background: "var(--card)",
+                      border: "1px solid var(--border)",
+                      borderRadius: "8px"
+                    }}
+                  />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="paid"
+                    stroke="#5F8D7E"
+                    strokeWidth={2}
+                    name="Encaissé"
+                    dot={{ fill: "#5F8D7E" }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="expected"
+                    stroke="#A7D8C8"
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    name="Attendu"
+                    dot={{ fill: "#A7D8C8" }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div style={{ width: '100%', height: '256px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontSize: '13px', color: 'var(--muted-foreground)' }}>
+                Chargement...
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Shortcuts */}
@@ -277,30 +291,27 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody>
-              {recentPayments.length === 0 ? (
+              {recentPayments.length === 0 && (
                 <tr>
                   <td colSpan={5} className="text-center text-[var(--muted-foreground)] py-8">
                     Aucun paiement récent
                   </td>
                 </tr>
-              ) : (
-                <>
-                  {recentPayments.map((payment) => (
-                    <tr key={payment.payment_id} data-testid={`payment-row-${payment.payment_id}`}>
-                      <td>{new Date(payment.due_date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })}</td>
-                      <td>
-                        <div>
-                          <p className="font-medium">{payment.tenant_name || "N/A"}</p>
-                          <p className="text-xs text-[var(--muted-foreground)]">{payment.tenant_phone}</p>
-                        </div>
-                      </td>
-                      <td>{payment.building_name}, {payment.unit_name}</td>
-                      <td className="font-medium">{formatCurrency(payment.amount)}</td>
-                      <td>{getStatusBadge(payment.status)}</td>
-                    </tr>
-                  ))}
-                </>
               )}
+              {recentPayments.map((payment) => (
+                <tr key={payment.payment_id} data-testid={`payment-row-${payment.payment_id}`}>
+                  <td>{new Date(payment.due_date).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })}</td>
+                  <td>
+                    <div>
+                      <p className="font-medium">{payment.tenant_name || "N/A"}</p>
+                      <p className="text-xs text-[var(--muted-foreground)]">{payment.tenant_phone}</p>
+                    </div>
+                  </td>
+                  <td>{payment.building_name}, {payment.unit_name}</td>
+                  <td className="font-medium">{formatCurrency(payment.amount)}</td>
+                  <td>{getStatusBadge(payment.status)}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

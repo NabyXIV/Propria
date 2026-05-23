@@ -23,10 +23,16 @@ export default function Paiements() {
     status: "UNPAID",
     due_date: ""
   });
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     fetchData();
   }, [statusFilter]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsMounted(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -101,7 +107,10 @@ export default function Paiements() {
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "USD" }).format(amount);
+    return new Intl.NumberFormat("fr-SN", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount) + " FCFA";
   };
 
   if (loading) {
@@ -181,24 +190,32 @@ export default function Paiements() {
               </span>
             </div>
           </div>
-          <div className="h-48">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                <XAxis dataKey="month" stroke="var(--muted-foreground)" fontSize={12} />
-                <YAxis stroke="var(--muted-foreground)" fontSize={12} />
-                <Tooltip 
-                  contentStyle={{ 
-                    background: "var(--card)", 
-                    border: "1px solid var(--border)",
-                    borderRadius: "8px"
-                  }}
-                />
-                <Line type="monotone" dataKey="paid" stroke="#5F8D7E" strokeWidth={2} dot={{ fill: "#5F8D7E" }} />
-                <Line type="monotone" dataKey="expected" stroke="#A7D8C8" strokeWidth={2} strokeDasharray="5 5" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+          {isMounted ? (
+            <div style={{ width: '100%', height: '192px' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                  <XAxis dataKey="month" stroke="var(--muted-foreground)" fontSize={12} />
+                  <YAxis stroke="var(--muted-foreground)" fontSize={12} />
+                  <Tooltip
+                    contentStyle={{
+                      background: "var(--card)",
+                      border: "1px solid var(--border)",
+                      borderRadius: "8px"
+                    }}
+                  />
+                  <Line type="monotone" dataKey="paid" stroke="#5F8D7E" strokeWidth={2} dot={{ fill: "#5F8D7E" }} />
+                  <Line type="monotone" dataKey="expected" stroke="#A7D8C8" strokeWidth={2} strokeDasharray="5 5" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div style={{ width: '100%', height: '192px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontSize: '13px', color: 'var(--muted-foreground)' }}>
+                Chargement...
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -304,15 +321,15 @@ export default function Paiements() {
               </tr>
             </thead>
             <tbody>
-              {payments.length === 0 ? (
+              {payments.length === 0 && (
                 <tr>
                   <td colSpan={7} className="text-center text-[var(--muted-foreground)] py-8">
                     Aucun paiement
                   </td>
                 </tr>
-              ) : (
-                payments.map((payment) => (
-                  <tr key={payment.payment_id} data-testid={`payment-row-${payment.payment_id}`}>
+              )}
+              {payments.map((payment) => (
+              <tr key={payment.payment_id} data-testid={`payment-row-${payment.payment_id}`}>
                     <td className="font-medium">{payment.tenant_name || "N/A"}</td>
                     <td className="text-[var(--muted-foreground)]">{payment.tenant_phone || "---"}</td>
                     <td>{payment.building_name} - {payment.unit_name}</td>
@@ -350,9 +367,8 @@ export default function Paiements() {
                         Voir
                       </Button>
                     </td>
-                  </tr>
-                ))
-              )}
+              </tr>
+              ))}
             </tbody>
           </table>
         </div>
