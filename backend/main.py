@@ -10,6 +10,7 @@ from app.routes.leases import router as leases_router
 from app.routes.payments import router as payments_router
 from app.routes.dashboard import router as dashboard_router
 from app.routes.reminders import router as reminders_router
+from app.routes.documents import router as documents_router 
 
 
 load_dotenv()
@@ -40,6 +41,7 @@ app.include_router(leases_router, prefix="/api")
 app.include_router(payments_router, prefix="/api")
 app.include_router(dashboard_router, prefix="/api")
 app.include_router(reminders_router, prefix="/api")
+app.include_router(documents_router, prefix="/api")
 
 @app.get("/")
 async def root():
