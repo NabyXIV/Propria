@@ -23,6 +23,7 @@ export default function Biens() {
 
   useEffect(() => {
     fetchBuildings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

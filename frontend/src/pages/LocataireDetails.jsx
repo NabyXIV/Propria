@@ -24,6 +24,7 @@ export default function LocataireDetails() {
 
   useEffect(() => {
     fetchTenantDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchTenantDetails = async () => {
