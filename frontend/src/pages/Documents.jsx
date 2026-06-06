@@ -19,6 +19,7 @@ export default function Documents() {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTenant]);
 
   const fetchData = async () => {

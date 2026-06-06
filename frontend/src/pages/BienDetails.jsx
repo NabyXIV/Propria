@@ -19,6 +19,7 @@ export default function BienDetails() {
 
   useEffect(() => {
     fetchBuildingDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchBuildingDetails = async () => {
