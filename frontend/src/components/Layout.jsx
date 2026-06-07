@@ -181,7 +181,7 @@ export default function Layout({ children, user }) {
 
       {/* ── Sidebar (desktop only) ─────────────────────────── */}
       <aside
-        className={`hidden lg:flex lg:flex-col fixed left-0 top-0 h-full bg-[var(--sidebar)] z-50 transition-all duration-300 ${
+        className={`hidden lg:flex lg:flex-col fixed left-0 top-0 h-full bg-[var(--sidebar)] z-50 transition-all duration-300 group ${
           collapsed ? "w-20" : "w-64"
         }`}
       >
@@ -240,7 +240,7 @@ export default function Layout({ children, user }) {
         {/* Collapse toggle */}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="absolute -right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 rounded-full bg-[var(--card)] border border-[var(--border)] text-[var(--muted-foreground)] flex items-center justify-center shadow-sm hover:bg-[var(--muted)] hover:text-[var(--primary)] transition-colors"
+          className="hidden lg:flex absolute -right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 rounded-full bg-[var(--card)] border border-[var(--border)] text-[var(--muted-foreground)] items-center justify-center shadow-sm hover:bg-[var(--muted)] hover:text-[var(--primary)] transition-all duration-200 opacity-0 group-hover:opacity-100"
           data-testid="collapse-sidebar-btn"
         >
           {collapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
