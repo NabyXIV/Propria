@@ -227,7 +227,11 @@ export default function BienDetails() {
                     <td className="font-medium">{unit.name}</td>
                     <td>{unit.floor || "---"}</td>
                     <td>{unit.rooms || "---"}</td>
-                    <td>{unit.rent ? `${unit.rent} $` : "---"}</td>
+                    <td>
+                      {unit.loyer_mensuel
+                        ? new Intl.NumberFormat("fr-SN").format(unit.loyer_mensuel) + " FCFA"
+                        : "---"}
+                    </td>
                     <td>{unit.tenant_name || "---"}</td>
                     <td>
                       <span className={unit.status === "occupied" ? "badge-occupied" : "badge-vacant"}>
@@ -236,6 +240,21 @@ export default function BienDetails() {
                     </td>
                     <td>
                       <div className="flex items-center gap-2">
+                        {unit.status === "vacant" && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => navigate(`/assigner/${unit.unit_id}`, {
+                              state: {
+                                unit_name: unit.name,
+                                building_name: building.name
+                              }
+                            })}
+                            data-testid={`assign-unit-detail-${unit.unit_id}`}
+                          >
+                            Assigner
+                          </Button>
+                        )}
                         <Button
                           size="sm"
                           variant="ghost"

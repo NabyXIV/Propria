@@ -17,6 +17,7 @@ import Parametres from "./pages/Parametres";
 import AuthCallback from "./pages/AuthCallback";
 import NotificationDetail from "./pages/NotificationDetail";
 import Payer from "./pages/Payer";
+import AssignerLogement from "./pages/AssignerLogement";
 import Layout from "./components/Layout";
 
 // Protected Route component
@@ -97,6 +98,7 @@ function AppRouter() {
       <Route path="/relances" element={<ProtectedRoute><Relances /></ProtectedRoute>} />
       <Route path="/notifications/:id" element={<ProtectedRoute><NotificationDetail /></ProtectedRoute>} />
       <Route path="/parametres" element={<ProtectedRoute><Parametres /></ProtectedRoute>} />
+      <Route path="/assigner/:unitId" element={<ProtectedRoute><AssignerLogement /></ProtectedRoute>} />
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>

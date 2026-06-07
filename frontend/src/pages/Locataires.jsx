@@ -48,7 +48,7 @@ export default function Locataires() {
 
   const formatCurrency = (amount) => {
     if (!amount) return "---";
-    return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "USD" }).format(amount);
+    return new Intl.NumberFormat("fr-SN").format(amount) + " FCFA";
   };
 
   if (loading) {
@@ -174,7 +174,7 @@ export default function Locataires() {
                         : "---"
                       }
                     </td>
-                    <td className="font-medium">{formatCurrency(tenant.rent)}</td>
+                    <td className="font-medium">{formatCurrency(tenant.loyer_mensuel)}</td>
                     <td>
                       <Button
                         size="sm"

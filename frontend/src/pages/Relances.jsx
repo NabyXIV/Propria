@@ -34,7 +34,7 @@ export default function Relances() {
   const generateMessage = (payment) => {
     const message = `Bonjour ${payment.tenant_name || ""},
 
-Nous vous rappelons que votre loyer de ${payment.amount}$ pour la période ${payment.period} est en retard.
+Nous vous rappelons que votre loyer de ${new Intl.NumberFormat("fr-SN", { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(payment.amount)} FCFA pour la période ${payment.period} est en retard.
 Date d'échéance: ${new Date(payment.due_date).toLocaleDateString("fr-FR")}
 
 Merci de régulariser votre situation dans les plus brefs délais.
@@ -78,7 +78,10 @@ Propria - Gestion Locative`;
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "USD" }).format(amount);
+    return new Intl.NumberFormat("fr-SN", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount) + " FCFA";
   };
 
   const isAlreadyReminded = (paymentId) => {

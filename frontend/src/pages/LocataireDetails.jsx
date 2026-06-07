@@ -244,7 +244,11 @@ export default function LocataireDetails() {
                 
                 <div>
                   <Label className="text-[var(--muted-foreground)] text-xs uppercase">Loyer mensuel</Label>
-                  <p className="text-[var(--text)] font-medium mt-1">{lease.rent} $</p>
+                  <p className="text-[var(--text)] font-medium mt-1">
+                    {lease.loyer_mensuel
+                      ? new Intl.NumberFormat("fr-SN").format(lease.loyer_mensuel) + " FCFA"
+                      : "---"}
+                  </p>
                 </div>
               </>
             )}

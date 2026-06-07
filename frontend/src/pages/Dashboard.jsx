@@ -118,7 +118,7 @@ export default function Dashboard() {
               </p>
             </div>
             <div className="p-3 bg-[var(--primary)]/10 rounded-xl">
-              <DollarSign className="w-6 h-6 text-[var(--primary)]" />
+              <span style={{ fontSize: '18px', fontWeight: '700', color: 'var(--primary)' }}>FCFA</span>
             </div>
           </div>
         </div>

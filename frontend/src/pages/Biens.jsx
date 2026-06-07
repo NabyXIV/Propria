@@ -361,7 +361,11 @@ export default function Biens() {
                           {unit.name}
                         </div>
                       </td>
-                      <td>{unit.rent ? `${unit.rent} $` : "---"}</td>
+                      <td>
+                        {unit.loyer_mensuel
+                          ? new Intl.NumberFormat("fr-SN").format(unit.loyer_mensuel) + " FCFA"
+                          : "---"}
+                      </td>
                       <td>{unit.tenant_name || "---"}</td>
                       <td>
                         <span className={unit.status === "occupied" ? "badge-occupied" : "badge-vacant"}>
@@ -373,7 +377,12 @@ export default function Biens() {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => navigate("/locataires")}
+                            onClick={() => navigate(`/assigner/${unit.unit_id}`, {
+                              state: {
+                                unit_name: unit.name,
+                                building_name: selectedBuilding.name
+                              }
+                            })}
                             data-testid={`assign-unit-${unit.unit_id}`}
                           >
                             Assigner
