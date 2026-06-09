@@ -224,7 +224,7 @@ export default function Documents() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => window.open(`${process.env.REACT_APP_BACKEND_URL}/api/files/${doc.file_path}`, "_blank")}
+                            onClick={() => window.open(doc.file_url, "_blank")}
                             data-testid={`view-doc-${doc.document_id}`}
                           >
                             <Eye className="w-4 h-4" />
