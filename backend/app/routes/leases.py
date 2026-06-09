@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
 from typing import List, Optional
+from pathlib import Path
 from app.schemas.lease import LeaseCreate, LeaseResponse
 from app.services.lease_service import (
     get_all_leases,
@@ -8,6 +9,8 @@ from app.services.lease_service import (
     terminate_lease,
     delete_lease
 )
+from app.services.storage_service import upload_file
+from app.core.database import get_db
 from app.routes.auth import get_current_user
 
 router = APIRouter(prefix="/leases", tags=["Leases"])
@@ -53,3 +56,34 @@ async def remove_lease(lease_id: str, current_user=Depends(get_current_user)):
     if not deleted:
         raise HTTPException(status_code=404, detail="Bail introuvable")
     return {"message": "Bail supprimé"}
+
+@router.post("/{lease_id}/contract")
+async def upload_contract(
+    lease_id: str,
+    file: UploadFile = File(...),
+    current_user=Depends(get_current_user)
+):
+    db = get_db()
+    lease = await db.leases.find_one({"lease_id": lease_id})
+    if not lease:
+        raise HTTPException(status_code=404, detail="Bail introuvable")
+
+    # Vérifie l'extension
+    file_ext = Path(file.filename).suffix.lower()
+    if file_ext not in [".pdf", ".jpg", ".jpeg", ".png"]:
+        raise HTTPException(status_code=400, detail="Extension non autorisée")
+
+    # Lit le fichier
+    file_data = await file.read()
+
+    # Upload vers Supabase Storage bucket "contrats"
+    file_path = f"{lease_id}/contrat{file_ext}"
+    file_url = await upload_file("contracts", file_path, file_data, file.content_type)
+
+    # Met à jour le bail avec l'URL du contrat
+    await db.leases.update_one(
+        {"lease_id": lease_id},
+        {"$set": {"contract_file_path": file_url}}
+    )
+
+    return {"message": "Contrat uploadé", "file_url": file_url}
