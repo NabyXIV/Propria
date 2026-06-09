@@ -92,7 +92,7 @@ export default function LocataireDetails() {
     }
   };
 
-  const handleUploadContract = async () => {
+ const handleUploadContract = async () => {
     if (!contractFile || !lease) {
       toast.error("Veuillez sélectionner un fichier");
       return;
@@ -101,7 +101,11 @@ export default function LocataireDetails() {
     formData.append("file", contractFile);
 
     try {
-      await api.post(`/api/leases/${lease.lease_id}/contract`, formData);
+      await api.post(`/api/leases/${lease.lease_id}/contract`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
       toast.success("Contrat uploadé");
       setContractFile(null);
       fetchTenantDetails();
@@ -291,7 +295,8 @@ export default function LocataireDetails() {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => window.open(`${process.env.REACT_APP_BACKEND_URL}/api/files/${lease.contract_file_path}`, "_blank")}
+                    onClick={() => window.open(lease.contract_file_path, "_blank")} /* L'URL du fichier est maintenant complète et directe 
+                    (ex: https://xxx.supabase.co/storage/... Plus besoin de passer par /api/files/ du back.*/
                     data-testid="view-contract-btn"
                   >
                     Voir
@@ -367,7 +372,7 @@ export default function LocataireDetails() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => window.open(`${process.env.REACT_APP_BACKEND_URL}/api/files/${doc.file_path}`, "_blank")}
+                          onClick={() => window.open(doc.file_url, "_blank")}
                           data-testid={`view-doc-${doc.document_id}`}
                         >
                           Voir
