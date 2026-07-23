@@ -2,6 +2,26 @@ import uuid
 from datetime import datetime, timezone
 from app.core.database import get_db
 
+async def count_units_stats(building_id: str) -> dict:
+    db = get_db()
+    units = await db.units.find(
+        {"building_id": building_id}, {"_id": 0}
+    ).to_list(100)
+    
+    total = len(units)
+    occupied = 0
+    
+    for u in units:
+        # Vérifie s'il y a un bail actif pour cet appartement
+        lease = await db.leases.find_one(
+            {"unit_id": u["unit_id"], "active": True}
+        )
+        if lease:
+            occupied += 1
+    
+    vacant = total - occupied
+    return {"unit_count": total, "vacant_count": vacant}
+
 async def get_all_buildings():
     db = get_db()
     buildings = await db.buildings.find({}, {"_id": 0}).to_list(1000)
@@ -9,9 +29,11 @@ async def get_all_buildings():
     for b in buildings:
         if isinstance(b.get('created_at'), str):
             b['created_at'] = datetime.fromisoformat(b['created_at'])
-        units = await db.units.find({"building_id": b["building_id"]}, {"_id": 0}).to_list(100)
-        b["unit_count"] = len(units)
-        b["vacant_count"] = sum(1 for u in units if u.get("status") == "vacant")
+        elif isinstance(b.get('created_at'), datetime) and b['created_at'].tzinfo is None:
+            b['created_at'] = b['created_at'].replace(tzinfo=timezone.utc)
+        stats = await count_units_stats(b["building_id"])
+        b["unit_count"] = stats["unit_count"]
+        b["vacant_count"] = stats["vacant_count"]
         result.append(b)
     return result
 
@@ -22,9 +44,11 @@ async def get_building_by_id(building_id: str):
         return None
     if isinstance(b.get('created_at'), str):
         b['created_at'] = datetime.fromisoformat(b['created_at'])
-    units = await db.units.find({"building_id": building_id}, {"_id": 0}).to_list(100)
-    b["unit_count"] = len(units)
-    b["vacant_count"] = sum(1 for u in units if u.get("status") == "vacant")
+    elif isinstance(b.get('created_at'), datetime) and b['created_at'].tzinfo is None:
+        b['created_at'] = b['created_at'].replace(tzinfo=timezone.utc)
+    stats = await count_units_stats(building_id)
+    b["unit_count"] = stats["unit_count"]
+    b["vacant_count"] = stats["vacant_count"]
     return b
 
 async def create_building(name: str, address: str):
